@@ -26,6 +26,12 @@ end
 
 local function parse_phpcs_output(output)
     local results = {}
+        -- Matches PHP_CodeSniffer output in format: "file:line:column: type - message"
+        -- ([^:]+)   - Captures filename (any chars except colon)
+        -- (%d+)     - Captures line number (digits)
+        -- (%d+)     - Captures column number (digits)
+        -- (%w+)     - Captures type (word chars like "ERROR" or "WARNING")
+        -- (.+)      - Captures the message (rest of the line after " - ")
     for line in output:gmatch("[^\r\n]+") do
         local file, lnum, col, type, msg = line:match("([^:]+):(%d+):(%d+): (%w+) %- (.+)")
         if file and lnum and col and type and msg then
